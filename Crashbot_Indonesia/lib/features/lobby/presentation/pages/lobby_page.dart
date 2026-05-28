@@ -19,6 +19,8 @@ import 'package:my_flutter_app/features/lobby/presentation/widgets/lobby_center_
 import 'package:my_flutter_app/features/lobby/presentation/widgets/lobby_leaderboard.dart';
 import 'package:my_flutter_app/features/lobby/presentation/widgets/moving_background_painter.dart';
 
+import 'package:my_flutter_app/core/services/audio_manager.dart';
+
 /// Main lobby page — the home screen after authentication.
 /// Orchestrates realtime battery/connectivity/ping monitoring
 /// and delegates UI to extracted sub-widgets.
@@ -63,6 +65,13 @@ class _LobbyPageState extends State<LobbyPage> with TickerProviderStateMixin {
     _initConnectivity();
     _initPing();
     _checkUsernameAndPrompt();
+    
+    // Start background lobby music
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AudioManager>().startLobbyMusic();
+      }
+    });
   }
 
   @override

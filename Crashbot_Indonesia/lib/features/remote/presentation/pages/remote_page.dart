@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
@@ -8,6 +7,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:my_flutter_app/core/constants/app_colors.dart';
 import 'package:my_flutter_app/core/constants/app_sizes.dart';
 import 'package:my_flutter_app/core/widgets/control_button.dart';
+import 'package:my_flutter_app/core/widgets/dual_network_indicator.dart';
 import 'package:my_flutter_app/data/config/agora_config.dart';
 import 'package:my_flutter_app/features/remote/presentation/providers/control_provider.dart';
 
@@ -25,36 +25,17 @@ class _RemotePageState extends State<RemotePage> {
   int? _remoteUid;
   bool _isError = false;
   int _pingMs = 0;
-  List<ConnectivityResult> _connectivityResult = [ConnectivityResult.wifi];
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
 
   @override
   void initState() {
     super.initState();
     _initAgora();
-    _initConnectivity();
   }
 
   @override
   void dispose() {
     _leaveChannel();
-    _connectivitySub?.cancel();
     super.dispose();
-  }
-
-  Future<void> _initConnectivity() async {
-    try {
-      _connectivityResult = await Connectivity().checkConnectivity();
-      if (mounted) setState(() {});
-
-      _connectivitySub = Connectivity().onConnectivityChanged.listen((result) {
-        if (mounted) setState(() => _connectivityResult = result);
-      });
-    } on Exception catch (e, stackTrace) {
-      FlutterError.reportError(
-        FlutterErrorDetails(exception: e, stack: stackTrace),
-      );
-    }
   }
 
   Future<void> _initAgora() async {
@@ -89,6 +70,7 @@ class _RemotePageState extends State<RemotePage> {
           autoSubscribeAudio: false,
           publishCameraTrack: false,
           publishMicrophoneTrack: false,
+          enableMultipath: true,
         ),
       );
     } on Exception catch (e, stackTrace) {
@@ -175,12 +157,11 @@ class _RemotePageState extends State<RemotePage> {
                 Positioned(
                   top: AppSizes.spacingLg,
                   right: AppSizes.spacingLg,
-                  child: _ConnectionIndicator(
-                    isError: _isError,
-                    isJoined: _isJoined,
+                  child: DualNetworkIndicator(
+                    isAgoraError: _isError,
+                    isAgoraConnected: _isJoined,
                     hasRemoteUser: _remoteUid != null,
-                    pingMs: _pingMs,
-                    connectivityResult: _connectivityResult,
+                    customPingMs: _pingMs,
                   ),
                 ),
                 _LeftControls(
@@ -289,85 +270,7 @@ class _BackButton extends StatelessWidget {
   }
 }
 
-class _ConnectionIndicator extends StatelessWidget {
-  final bool isError;
-  final bool isJoined;
-  final bool hasRemoteUser;
-  final int pingMs;
-  final List<ConnectivityResult> connectivityResult;
-
-  const _ConnectionIndicator({
-    required this.isError,
-    required this.isJoined,
-    required this.hasRemoteUser,
-    required this.pingMs,
-    required this.connectivityResult,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final (Color indicatorColor, String text, IconData icon) =
-        _resolveIndicatorState();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.spacingLg,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(AppSizes.radiusRound),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: indicatorColor, size: AppSizes.iconMd),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-              color: indicatorColor,
-              fontSize: AppSizes.fontLg,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  (Color, String, IconData) _resolveIndicatorState() {
-    IconData icon = Icons.wifi;
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      icon = Icons.signal_cellular_alt;
-    } else if (connectivityResult.contains(ConnectivityResult.none)) {
-      icon = Icons.signal_wifi_off;
-    }
-
-    if (isError) {
-      return (AppColors.dangerRed, 'Error koneksi', Icons.wifi_off);
-    }
-
-    if (hasRemoteUser) {
-      final Color color = _pingColor;
-      return (color, '$pingMs ms', icon);
-    }
-
-    if (isJoined) {
-      return (AppColors.warningYellow, 'Menunggu Kamera...', icon);
-    }
-
-    return (Colors.white38, 'Menghubungkan...', icon);
-  }
-
-  Color get _pingColor {
-    if (pingMs > 0 && pingMs < 100) return AppColors.successGreen;
-    if (pingMs >= 100 && pingMs <= 200) return AppColors.warningYellow;
-    if (pingMs > 200) return AppColors.dangerRed;
-    return AppColors.successGreen;
-  }
-}
+// _ConnectionIndicator removed — replaced by DualNetworkIndicator widget.
 
 class _LeftControls extends StatelessWidget {
   final double sideOffset;

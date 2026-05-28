@@ -56,7 +56,14 @@ class _LobbyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, AppRoutes.remote),
+      onTap: () async {
+        // Do NOT pause music yet, because we are just going to the matchmaking room
+        // The music should continue in the matchmaking room
+        
+        if (context.mounted) {
+          await Navigator.pushNamed(context, AppRoutes.matchmaking);
+        }
+      },
       child: AnimatedBuilder(
         animation: pulseAnimation,
         builder: (_, __) => Container(

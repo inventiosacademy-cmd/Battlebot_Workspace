@@ -101,19 +101,15 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  height: 70, // Batasi tinggi blok sedikit lebih kecil
+                  height: 50, // Tinggi container dibuat lebih kecil
                   alignment: Alignment.center,
-                  child: OverflowBox(
-                    minHeight: 0,
-                    maxHeight: 120,
-                    child: Image.asset(
-                      'assets/fontlogo.png',
-                      height: 100, // Lebih kecil sedikit saja (100px)
-                      fit: BoxFit.contain,
-                    ),
+                  child: Image.asset(
+                    'assets/fontlogo.png',
+                    height: 50, // Tinggi logo diset tepat 50px (terlihat jauh lebih kecil dan rapi)
+                    fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(height: 10), // Jarak ditambah sedikit saja agar pas dan ideal
+                const SizedBox(height: 25), // Jarak diset ke 25 (ditambah 15px dari sebelumnya 10px)
                 if (_isSignUpMode) ...[
                   _UsernameField(controller: _usernameController),
                   const SizedBox(height: AppSizes.spacingXl),

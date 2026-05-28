@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:my_flutter_app/core/constants/app_colors.dart';
 import 'package:my_flutter_app/core/constants/app_sizes.dart';
+import 'package:my_flutter_app/core/widgets/dual_network_indicator.dart';
 import 'package:my_flutter_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:my_flutter_app/features/profile/presentation/providers/profile_provider.dart';
 import 'package:my_flutter_app/features/profile/presentation/widgets/game_profile_avatar.dart';
@@ -180,7 +181,7 @@ class _StatusIndicators extends StatelessWidget {
       children: [
         const _GemsDisplay(),
         const SizedBox(width: 12),
-        _SignalDisplay(icon: signalIcon, color: signalColor, pingMs: pingMs),
+        const DualNetworkIndicator(isLobby: true),
         const SizedBox(width: 12),
         _BatteryDisplay(
           icon: batteryIcon,
@@ -277,36 +278,6 @@ class _GemsContainer extends StatelessWidget {
   }
 }
 
-class _SignalDisplay extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final int pingMs;
-
-  const _SignalDisplay({
-    required this.icon,
-    required this.color,
-    required this.pingMs,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: AppSizes.iconLg),
-        const SizedBox(width: AppSizes.spacingSm),
-        Text(
-          pingMs > 0 ? '$pingMs ms' : '-- ms',
-          style: TextStyle(
-            color: color,
-            fontSize: AppSizes.fontBase,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class _BatteryDisplay extends StatelessWidget {
   final IconData icon;

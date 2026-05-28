@@ -4,6 +4,9 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   agora_rtc_engine
+  firebase_auth
+  firebase_core
+  firebase_database
   iris_method_channel
   permission_handler_windows
 )

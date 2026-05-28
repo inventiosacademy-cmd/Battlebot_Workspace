@@ -45,6 +45,7 @@ dependencies:
   permission_handler: ^11.3.1
   google_sign_in: ^6.2.1
   cloud_firestore: ^6.4.1
+  audioplayers: ^6.6.0
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +91,7 @@ flutter:
     - assets/avatar6.png
     - assets/frame1.png
     - assets/frame2.png
+    - assets/Titan_s_Last_Breath.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

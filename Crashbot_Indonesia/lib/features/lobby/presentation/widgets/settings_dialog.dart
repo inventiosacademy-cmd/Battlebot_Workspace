@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'package:my_flutter_app/core/constants/app_colors.dart';
 import 'package:my_flutter_app/core/constants/app_sizes.dart';
+import 'package:my_flutter_app/core/services/network_manager.dart';
 import 'package:my_flutter_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:my_flutter_app/core/services/audio_manager.dart';
 
 /// Full-screen styled dialog for game Settings (Pengaturan).
 /// Contains volume sliders, graphic settings, and the Logout (Keluar) button.
@@ -22,9 +24,16 @@ class SettingsDialog extends StatefulWidget {
 }
 
 class _SettingsDialogState extends State<SettingsDialog> {
-  double _musicVolume = 0.8;
   double _sfxVolume = 0.9;
   String _graphicsQuality = 'HIGH';
+  late bool _boostEnabled;
+
+  @override
+  void initState() {
+    super.initState();
+    final networkManager = Provider.of<NetworkManager>(context, listen: false);
+    _boostEnabled = networkManager.sendMode == NetworkSendMode.dual;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +71,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   children: [
                     _buildSectionTitle('AUDIO'),
                     const SizedBox(height: AppSizes.spacingMd),
-                    _buildVolumeSlider('Volume Musik', _musicVolume, (val) {
-                      setState(() => _musicVolume = val);
-                    }),
+                    _buildMusicVolumeControl(context),
                     _buildVolumeSlider('Volume SFX', _sfxVolume, (val) {
                       setState(() => _sfxVolume = val);
                     }),
@@ -72,6 +79,10 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     _buildSectionTitle('GRAFIK'),
                     const SizedBox(height: AppSizes.spacingMd),
                     _buildGraphicsQualitySelector(),
+                    const SizedBox(height: AppSizes.spacingXl),
+                    _buildSectionTitle('JARINGAN'),
+                    const SizedBox(height: AppSizes.spacingMd),
+                    _buildNetworkBoostToggle(),
                     const SizedBox(height: AppSizes.spacingXxxl),
                     _buildLogoutSection(context),
                   ],
@@ -261,6 +272,111 @@ class _SettingsDialogState extends State<SettingsDialog> {
     );
   }
 
+  Widget _buildNetworkBoostToggle() {
+    return Container(
+      padding: const EdgeInsets.all(AppSizes.spacingLg),
+      decoration: BoxDecoration(
+        color: _boostEnabled
+            ? AppColors.lightBlue.withValues(alpha: 0.06)
+            : Colors.white.withValues(alpha: 0.02),
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        border: Border.all(
+          color: _boostEnabled
+              ? AppColors.lightBlue.withValues(alpha: 0.25)
+              : Colors.white.withValues(alpha: 0.05),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Boost icon
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: _boostEnabled
+                  ? AppColors.lightBlue.withValues(alpha: 0.15)
+                  : Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+            ),
+            child: Icon(
+              Icons.rocket_launch,
+              color: _boostEnabled ? AppColors.lightBlue : Colors.white30,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppSizes.spacingLg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Network Boost',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: AppSizes.fontBase,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (_boostEnabled) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightBlue.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'ON',
+                          style: TextStyle(
+                            color: AppColors.lightBlue,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _boostEnabled
+                      ? 'Gabungkan WiFi + SIM untuk latency terendah'
+                      : 'Gunakan satu jaringan saja (default)',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.4),
+                    fontSize: AppSizes.fontXs,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: _boostEnabled,
+            activeThumbColor: AppColors.lightBlue,
+            activeTrackColor: AppColors.lightBlue.withValues(alpha: 0.3),
+            inactiveThumbColor: Colors.white30,
+            inactiveTrackColor: Colors.white.withValues(alpha: 0.08),
+            onChanged: (val) {
+              setState(() => _boostEnabled = val);
+              final networkManager =
+                  Provider.of<NetworkManager>(context, listen: false);
+              networkManager.setSendMode(
+                val ? NetworkSendMode.dual : NetworkSendMode.normal,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLogoutSection(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -358,6 +474,66 @@ class _SettingsDialogState extends State<SettingsDialog> {
               Provider.of<AuthProvider>(context, listen: false).signOut();
             },
             child: const Text('Keluar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMusicVolumeControl(BuildContext context) {
+    final audioManager = Provider.of<AudioManager>(context);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSizes.spacingSm),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 110,
+            child: Text(
+              'Volume Musik',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: AppSizes.fontBase,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Switch(
+            value: audioManager.isMusicEnabled,
+            activeThumbColor: AppColors.accentBlue,
+            activeTrackColor: AppColors.primaryBlue.withValues(alpha: 0.3),
+            inactiveThumbColor: Colors.white30,
+            inactiveTrackColor: Colors.white10,
+            onChanged: (val) {
+              audioManager.setMusicEnabled(val);
+            },
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: audioManager.isMusicEnabled ? AppColors.primaryBlue : Colors.white10,
+                inactiveTrackColor: Colors.white10,
+                thumbColor: audioManager.isMusicEnabled ? AppColors.accentBlue : Colors.white30,
+                overlayColor: AppColors.accentBlue.withValues(alpha: 0.2),
+              ),
+              child: Slider(
+                value: audioManager.volume,
+                onChanged: audioManager.isMusicEnabled
+                    ? (val) {
+                        audioManager.setVolume(val);
+                      }
+                    : null,
+              ),
+            ),
+          ),
+          Text(
+            '${(audioManager.volume * 100).toInt()}%',
+            style: const TextStyle(
+              color: Colors.white54,
+              fontSize: AppSizes.fontBase,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

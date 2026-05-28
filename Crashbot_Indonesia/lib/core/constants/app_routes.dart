@@ -5,5 +5,6 @@ class AppRoutes {
 
   static const String login = '/login';
   static const String lobby = '/lobby';
+  static const String matchmaking = '/matchmaking';
   static const String remote = '/remote';
 }
