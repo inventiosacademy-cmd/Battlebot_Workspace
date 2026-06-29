@@ -24,8 +24,6 @@ class SettingsDialog extends StatefulWidget {
 }
 
 class _SettingsDialogState extends State<SettingsDialog> {
-  double _sfxVolume = 0.9;
-  String _graphicsQuality = 'HIGH';
   late bool _boostEnabled;
 
   @override
@@ -72,13 +70,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     _buildSectionTitle('AUDIO'),
                     const SizedBox(height: AppSizes.spacingMd),
                     _buildMusicVolumeControl(context),
-                    _buildVolumeSlider('Volume SFX', _sfxVolume, (val) {
-                      setState(() => _sfxVolume = val);
-                    }),
-                    const SizedBox(height: AppSizes.spacingXl),
-                    _buildSectionTitle('GRAFIK'),
-                    const SizedBox(height: AppSizes.spacingMd),
-                    _buildGraphicsQualitySelector(),
                     const SizedBox(height: AppSizes.spacingXl),
                     _buildSectionTitle('JARINGAN'),
                     const SizedBox(height: AppSizes.spacingMd),
@@ -169,108 +160,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
     );
   }
 
-  Widget _buildVolumeSlider(
-    String label,
-    double value,
-    ValueChanged<double> onChanged,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.spacingSm),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: AppSizes.fontBase,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                activeTrackColor: AppColors.primaryBlue,
-                inactiveTrackColor: Colors.white10,
-                thumbColor: AppColors.accentBlue,
-                overlayColor: AppColors.accentBlue.withValues(alpha: 0.2),
-              ),
-              child: Slider(
-                value: value,
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-          Text(
-            '${(value * 100).toInt()}%',
-            style: const TextStyle(
-              color: Colors.white54,
-              fontSize: AppSizes.fontBase,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGraphicsQualitySelector() {
-    final qualities = ['LOW', 'MEDIUM', 'HIGH'];
-    return Row(
-      children: [
-        const SizedBox(
-          width: 110,
-          child: Text(
-            'Kualitas Grafik',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: AppSizes.fontBase,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: qualities.map((q) {
-              final isSelected = _graphicsQuality == q;
-              return GestureDetector(
-                onTap: () => setState(() => _graphicsQuality = q),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSizes.spacingLg,
-                    vertical: AppSizes.spacingSm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppColors.primaryBlue.withValues(alpha: 0.2)
-                        : Colors.white.withValues(alpha: 0.03),
-                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppColors.accentBlue
-                          : Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Text(
-                    q,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white54,
-                      fontSize: AppSizes.fontSm,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildNetworkBoostToggle() {
     return Container(

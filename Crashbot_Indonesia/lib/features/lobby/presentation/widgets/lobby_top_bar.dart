@@ -227,7 +227,7 @@ class _GemsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(AppSizes.radiusXl),
         border: Border.all(color: AppColors.accentBlue.withValues(alpha: 0.4)),
       ),

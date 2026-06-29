@@ -18,49 +18,54 @@ class MovingBackgroundPainter extends CustomPainter {
     final double w = size.width;
     final double h = size.height;
     final double phase = animationValue * 2 * math.pi;
+    final double baseSize = math.min(w, h);
 
+    final double blob1Radius = baseSize * 0.35 + math.sin(phase) * 20;
     _drawBlob(
       canvas,
       offset: Offset(
         w * 0.25 + math.sin(phase) * w * 0.15,
         h * 0.4 + math.cos(phase) * h * 0.2,
       ),
-      radius: math.min(w, h) * 0.45 + math.sin(phase) * 40,
-      color: AppColors.dangerRed.withValues(alpha: 0.35),
-      blurSigma: 130,
+      radius: blob1Radius,
+      color: AppColors.dangerRed.withValues(alpha: 0.38),
+      blurSigma: blob1Radius * 0.55,
     );
 
+    final double blob2Radius = baseSize * 0.35 + math.cos(phase) * 20;
     _drawBlob(
       canvas,
       offset: Offset(
         w * 0.75 + math.cos(phase) * w * 0.15,
         h * 0.5 + math.sin(phase) * h * 0.2,
       ),
-      radius: math.min(w, h) * 0.45 + math.cos(phase) * 40,
-      color: AppColors.lightBlue.withValues(alpha: 0.28),
-      blurSigma: 140,
+      radius: blob2Radius,
+      color: AppColors.lightBlue.withValues(alpha: 0.32),
+      blurSigma: blob2Radius * 0.55,
     );
 
+    final double blob3Radius = baseSize * 0.4 + math.sin(phase + 1.0) * 15;
     _drawBlob(
       canvas,
       offset: Offset(
         w * 0.6 + math.sin(phase + 1.0) * w * 0.2,
         h * 0.3 + math.cos(phase + 1.0) * h * 0.15,
       ),
-      radius: math.min(w, h) * 0.5 + math.sin(phase + 1.0) * 30,
-      color: AppColors.primaryBlue.withValues(alpha: 0.3),
-      blurSigma: 150,
+      radius: blob3Radius,
+      color: AppColors.primaryBlue.withValues(alpha: 0.33),
+      blurSigma: blob3Radius * 0.55,
     );
 
+    final double blob4Radius = baseSize * 0.35 + math.cos(phase + 2.0) * 15;
     _drawBlob(
       canvas,
       offset: Offset(
         w * 0.4 + math.cos(phase + 2.0) * w * 0.2,
         h * 0.7 + math.sin(phase + 2.0) * h * 0.15,
       ),
-      radius: math.min(w, h) * 0.45 + math.cos(phase + 2.0) * 30,
-      color: AppColors.deepRed.withValues(alpha: 0.25),
-      blurSigma: 120,
+      radius: blob4Radius,
+      color: AppColors.deepRed.withValues(alpha: 0.28),
+      blurSigma: blob4Radius * 0.55,
     );
   }
 

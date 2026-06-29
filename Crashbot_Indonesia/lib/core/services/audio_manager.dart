@@ -115,7 +115,14 @@ class AudioManager with ChangeNotifier {
         await startLobbyMusic();
       }
     } else {
-      await stopLobbyMusic();
+      try {
+        if (_isPlaying) {
+          await _audioPlayer.stop();
+          _isPlaying = false;
+        }
+      } catch (e) {
+        debugPrint('AudioManager: Failed to stop music player — $e');
+      }
     }
 
     try {

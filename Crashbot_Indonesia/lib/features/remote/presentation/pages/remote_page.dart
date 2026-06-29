@@ -8,6 +8,7 @@ import 'package:my_flutter_app/core/constants/app_colors.dart';
 import 'package:my_flutter_app/core/constants/app_sizes.dart';
 import 'package:my_flutter_app/core/widgets/control_button.dart';
 import 'package:my_flutter_app/core/widgets/dual_network_indicator.dart';
+import 'package:my_flutter_app/core/services/audio_manager.dart';
 import 'package:my_flutter_app/data/config/agora_config.dart';
 import 'package:my_flutter_app/features/remote/presentation/providers/control_provider.dart';
 
@@ -35,6 +36,7 @@ class _RemotePageState extends State<RemotePage> {
   @override
   void dispose() {
     _leaveChannel();
+    Provider.of<AudioManager>(context, listen: false).startLobbyMusic();
     super.dispose();
   }
 
