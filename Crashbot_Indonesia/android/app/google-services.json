@@ -1,57 +1,85 @@
 {
   "project_info": {
-    "project_number": "808088559452",
-    "firebase_url": "https://rc-firebase-e7c09-default-rtdb.firebaseio.com",
-    "project_id": "rc-firebase-e7c09",
-    "storage_bucket": "rc-firebase-e7c09.firebasestorage.app"
+    "project_number": "385682929993",
+    "firebase_url": "https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "projectrc-ecf5f",
+    "storage_bucket": "projectrc-ecf5f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:808088559452:android:799a3b08c4aeb8e05beb99",
+        "mobilesdk_app_id": "1:385682929993:android:f44983ccbe6f5cda54c298",
         "android_client_info": {
           "package_name": "com.crashbot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "808088559452-j33s4s3ctcm2rts4d1rt94brerbeqmeg.apps.googleusercontent.com",
+          "client_id": "385682929993-obgh4m4kq95ucd4qcitslgtm1hvuj58g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.crashbot",
-            "certificate_hash": "9049a97aaa7e0d240f1555f9ff998cc6ac005565"
+            "certificate_hash": "c5b19cb37d75936c83cfff1dbb5a765e4d018f26"
           }
         },
         {
-          "client_id": "808088559452-pnm7inqb6990bnvuhggirur87tdt6g4v.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.crashbot",
-            "certificate_hash": "d8066ab7dbbf447153a9864c8180e900218c1ded"
-          }
-        },
-        {
-          "client_id": "808088559452-1169cqd4vsb1k60q6vhps5rdmvauh6dc.apps.googleusercontent.com",
+          "client_id": "385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDSuD4CTm9ZjLBiKfjp664hQS_isStrvPs"
+          "current_key": "AIzaSyCVUg9WlXGrLeQErvh6zr5ccaOhRQRE1Yg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "808088559452-1169cqd4vsb1k60q6vhps5rdmvauh6dc.apps.googleusercontent.com",
+              "client_id": "385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "808088559452-4esje44jj12v5bmb0k6it6ln6oq3fnqp.apps.googleusercontent.com",
+              "client_id": "385682929993-km8q3as0seflmt9088rkc915klafp5og.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.kontrolerButton.RunnerTests"
+                "bundle_id": "com.example.myFlutterApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385682929993:android:0f9536096fe69a1454c298",
+        "android_client_info": {
+          "package_name": "com.robotcontrol.robot_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVUg9WlXGrLeQErvh6zr5ccaOhRQRE1Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "385682929993-km8q3as0seflmt9088rkc915klafp5og.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myFlutterApp"
               }
             }
           ]

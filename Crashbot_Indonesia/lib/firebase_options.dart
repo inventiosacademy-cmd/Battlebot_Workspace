@@ -41,55 +41,51 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDSuD4CTm9ZjLBiKfjp664hQS_isStrvPs',
-    appId: '1:808088559452:android:be1d949fcb5fac2c5beb99',
-    messagingSenderId: '808088559452',
-    projectId: 'rc-firebase-e7c09',
-    databaseURL: 'https://rc-firebase-e7c09-default-rtdb.firebaseio.com',
-    storageBucket: 'rc-firebase-e7c09.firebasestorage.app',
+    apiKey: 'AIzaSyCVUg9WlXGrLeQErvh6zr5ccaOhRQRE1Yg',
+    appId: '1:385682929993:android:f44983ccbe6f5cda54c298',
+    messagingSenderId: '385682929993',
+    projectId: 'projectrc-ecf5f',
+    databaseURL: 'https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'projectrc-ecf5f.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBlqwq7hzQof1vFDIgyvcvlWZb_g1FsIec',
-    appId: '1:808088559452:ios:e52b27f7cf969e7f5beb99',
-    messagingSenderId: '808088559452',
-    projectId: 'rc-firebase-e7c09',
-    databaseURL: 'https://rc-firebase-e7c09-default-rtdb.firebaseio.com',
-    storageBucket: 'rc-firebase-e7c09.firebasestorage.app',
-    iosClientId:
-        '808088559452-m2fvcimgpvsvc2lv5rrntrrrcqntm5lb.apps.googleusercontent.com',
+    apiKey: 'AIzaSyB0O3DDcoLkeLJptHUm_PE6_ZvEihqpQcA',
+    appId: '1:385682929993:ios:31840b611028fc6c54c298',
+    messagingSenderId: '385682929993',
+    projectId: 'projectrc-ecf5f',
+    databaseURL: 'https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'projectrc-ecf5f.firebasestorage.app',
     iosBundleId: 'com.example.myFlutterApp',
   );
-
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCd3cz1cPLqd9pDAe-qwutF7R-PdVhEl7M',
-    appId: '1:808088559452:web:db41a0cb002a936f5beb99',
-    messagingSenderId: '808088559452',
-    projectId: 'rc-firebase-e7c09',
-    authDomain: 'rc-firebase-e7c09.firebaseapp.com',
-    databaseURL: 'https://rc-firebase-e7c09-default-rtdb.firebaseio.com',
-    storageBucket: 'rc-firebase-e7c09.firebasestorage.app',
+    apiKey: 'AIzaSyAy74Ih_-WAJhvZidIdwhPkIK2ai8XWoLo',
+    appId: '1:385682929993:web:79339efcacdf427454c298',
+    messagingSenderId: '385682929993',
+    projectId: 'projectrc-ecf5f',
+    authDomain: 'projectrc-ecf5f.firebaseapp.com',
+    databaseURL: 'https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'projectrc-ecf5f.firebasestorage.app',
+    measurementId: 'G-EPDMEBD2FJ',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBlqwq7hzQof1vFDIgyvcvlWZb_g1FsIec',
-    appId: '1:808088559452:ios:e52b27f7cf969e7f5beb99',
-    messagingSenderId: '808088559452',
-    projectId: 'rc-firebase-e7c09',
-    databaseURL: 'https://rc-firebase-e7c09-default-rtdb.firebaseio.com',
-    storageBucket: 'rc-firebase-e7c09.firebasestorage.app',
-    iosClientId:
-        '808088559452-m2fvcimgpvsvc2lv5rrntrrrcqntm5lb.apps.googleusercontent.com',
+    apiKey: 'AIzaSyB0O3DDcoLkeLJptHUm_PE6_ZvEihqpQcA',
+    appId: '1:385682929993:ios:31840b611028fc6c54c298',
+    messagingSenderId: '385682929993',
+    projectId: 'projectrc-ecf5f',
+    databaseURL: 'https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'projectrc-ecf5f.firebasestorage.app',
     iosBundleId: 'com.example.myFlutterApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCmlZ4m23eRdTpKTn8CdNytItUjsh9qNRA',
-    appId: '1:808088559452:web:3e2a45b2b3b1b52d5beb99',
-    messagingSenderId: '808088559452',
-    projectId: 'rc-firebase-e7c09',
-    authDomain: 'rc-firebase-e7c09.firebaseapp.com',
-    databaseURL: 'https://rc-firebase-e7c09-default-rtdb.firebaseio.com',
-    storageBucket: 'rc-firebase-e7c09.firebasestorage.app',
+    apiKey: 'AIzaSyAy74Ih_-WAJhvZidIdwhPkIK2ai8XWoLo',
+    appId: '1:385682929993:web:4ef8511dbaf985ab54c298',
+    messagingSenderId: '385682929993',
+    projectId: 'projectrc-ecf5f',
+    authDomain: 'projectrc-ecf5f.firebaseapp.com',
+    databaseURL: 'https://projectrc-ecf5f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'projectrc-ecf5f.firebasestorage.app',
+    measurementId: 'G-DNC2WE11RM',
   );
 }

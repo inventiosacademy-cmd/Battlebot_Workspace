@@ -161,6 +161,22 @@ class _LoginPageState extends State<LoginPage> {
                     if (mounted) setState(() => _isLoading = false);
                   },
                 ),
+                const SizedBox(height: 16),
+                _FacebookSignInButton(
+                  isLoading: _isLoading,
+                  onPressed: () async {
+                    setState(() => _isLoading = true);
+                    final auth = Provider.of<AuthProvider>(context, listen: false);
+                    final error = await auth.signInWithFacebook();
+                    
+                    if (error != null && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(error), backgroundColor: AppColors.dangerRed),
+                      );
+                    }
+                    if (mounted) setState(() => _isLoading = false);
+                  },
+                ),
               ],
             ),
           ),
@@ -364,6 +380,40 @@ class _GoogleSignInButton extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FacebookSignInButton extends StatelessWidget {
+  final bool isLoading;
+  final VoidCallback onPressed;
+
+  const _FacebookSignInButton({required this.isLoading, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 42.0,
+      child: OutlinedButton.icon(
+        onPressed: isLoading ? null : onPressed,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Color(0xFF1877F2), width: 1.5),
+          foregroundColor: const Color(0xFF1877F2),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+          ),
+        ),
+        icon: const Icon(Icons.facebook, size: 24, color: Color(0xFF1877F2)),
+        label: const Text(
+          'SIGN IN WITH FACEBOOK',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1877F2),
           ),
         ),
       ),

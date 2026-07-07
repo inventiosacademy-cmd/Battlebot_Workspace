@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:my_flutter_app/features/auth/presentation/providers/auth_provider.dart';
 
 import 'package:my_flutter_app/core/constants/app_colors.dart';
 import 'package:my_flutter_app/core/constants/app_sizes.dart';
@@ -26,18 +28,104 @@ class _RemotePageState extends State<RemotePage> {
   int? _remoteUid;
   bool _isError = false;
   int _pingMs = 0;
+  
+  StreamSubscription<DatabaseEvent>? _roomSubscription;
+  bool _isExiting = false;
+  late AudioManager _audioManager;
+  String? _mySlot;
 
   @override
   void initState() {
     super.initState();
+    _audioManager = Provider.of<AudioManager>(context, listen: false);
     _initAgora();
+    _setupPresence();
+    _initFirebaseListener();
+  }
+
+  Future<void> _setupPresence() async {
+    final user = Provider.of<AuthProvider>(context, listen: false).user;
+    if (user == null) return;
+    
+    final ref = FirebaseDatabase.instance.ref('matchmaking_room');
+    final snapshot = await ref.get();
+    if (snapshot.value != null) {
+      final data = snapshot.value as Map<dynamic, dynamic>;
+      final p1 = data['player1'] as Map<dynamic, dynamic>?;
+      final p2 = data['player2'] as Map<dynamic, dynamic>?;
+      
+      if (p1 != null && p1['uid'] == user.uid) _mySlot = 'player1';
+      else if (p2 != null && p2['uid'] == user.uid) _mySlot = 'player2';
+      
+      if (_mySlot != null) {
+        ref.child(_mySlot!).onDisconnect().remove();
+        ref.child('gameState').onDisconnect().set('waiting');
+      }
+    }
+  }
+
+  void _initFirebaseListener() {
+    _roomSubscription = FirebaseDatabase.instance.ref('matchmaking_room').onValue.listen((event) {
+      if (_isExiting || !mounted) return;
+      
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) {
+         _showOpponentLeftDialog("Room ditutup oleh server.");
+         return;
+      }
+      
+      final p1 = data['player1'];
+      final p2 = data['player2'];
+      final gameState = data['gameState'];
+      
+      if (gameState != 'started') {
+         _showOpponentLeftDialog("Permainan dihentikan.");
+      } else if (p1 == null || p2 == null) {
+         _showOpponentLeftDialog("Lawan keluar dari permainan.");
+      }
+    });
+  }
+
+  void _showOpponentLeftDialog(String reason) {
+    if (!mounted || _isExiting) return;
+    setState(() => _isExiting = true);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: const Text('Permainan Selesai', style: TextStyle(color: Colors.white)),
+        content: Text(reason, style: const TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); 
+              Navigator.of(context).pop(); 
+            },
+            child: const Text('KEMBALI KE LOBBY', style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   void dispose() {
+    _cleanupPresence();
+    _roomSubscription?.cancel();
     _leaveChannel();
-    Provider.of<AudioManager>(context, listen: false).startLobbyMusic();
+    _audioManager.startLobbyMusic();
     super.dispose();
+  }
+
+  void _cleanupPresence() {
+    if (_mySlot != null) {
+      final ref = FirebaseDatabase.instance.ref('matchmaking_room');
+      ref.child(_mySlot!).remove();
+      ref.child(_mySlot!).onDisconnect().cancel();
+      ref.update({'gameState': 'waiting'});
+      ref.child('gameState').onDisconnect().cancel();
+    }
   }
 
   Future<void> _initAgora() async {
@@ -46,7 +134,7 @@ class _RemotePageState extends State<RemotePage> {
       await _engine.initialize(
         const RtcEngineContext(
           appId: AgoraConfig.appId,
-          channelProfile: ChannelProfileType.channelProfileCommunication,
+          channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
         ),
       );
 
@@ -60,19 +148,19 @@ class _RemotePageState extends State<RemotePage> {
         ),
       );
 
-      await _engine.enableVideo();
-      await _engine.disableAudio();
+      await _engine.setClientRole(role: ClientRoleType.clientRoleAudience);
 
+      int randomUid = DateTime.now().millisecondsSinceEpoch % 1000000;
       await _engine.joinChannel(
         token: AgoraConfig.token,
         channelId: AgoraConfig.channelName,
-        uid: 0,
+        uid: randomUid,
         options: const ChannelMediaOptions(
           autoSubscribeVideo: true,
           autoSubscribeAudio: false,
           publishCameraTrack: false,
           publishMicrophoneTrack: false,
-          enableMultipath: true,
+          clientRoleType: ClientRoleType.clientRoleAudience,
         ),
       );
     } on Exception catch (e, stackTrace) {

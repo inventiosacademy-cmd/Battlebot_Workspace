@@ -36,6 +36,7 @@ class _MatchmakingRoomPageState extends State<MatchmakingRoomPage>
   String _gameState = 'waiting';
   bool _isFull = false;
   StreamSubscription<DatabaseEvent>? _roomSubscription;
+  bool _isNavigatingToRemote = false;
 
   @override
   void initState() {
@@ -127,6 +128,8 @@ class _MatchmakingRoomPageState extends State<MatchmakingRoomPage>
 
     if (_mySlot != null) {
       _roomRef.child(_mySlot!).onDisconnect().remove();
+      // Force isReady to false to avoid caching issues from previous matches
+      await _roomRef.child(_mySlot!).update({'isReady': false});
     }
 
     _roomSubscription = _roomRef.onValue.listen((event) {
@@ -138,9 +141,17 @@ class _MatchmakingRoomPageState extends State<MatchmakingRoomPage>
             _player2Data = data['player2'] != null ? Map<String, dynamic>.from(data['player2'] as Map) : null;
             _gameState = data['gameState']?.toString() ?? 'waiting';
           });
-          
+          bool p1Ready = _player1Data?['isReady'] ?? false;
+          bool p2Ready = _player2Data?['isReady'] ?? false;
+
           if (_gameState == 'started') {
-            _startGame();
+            if (p1Ready && p2Ready) {
+              _startGame();
+            }
+          } else {
+            if (p1Ready && p2Ready && _mySlot == 'player1') {
+              _roomRef.update({'gameState': 'started'});
+            }
           }
         }
       } else {
@@ -167,6 +178,7 @@ class _MatchmakingRoomPageState extends State<MatchmakingRoomPage>
     final audioManager = Provider.of<AudioManager>(context, listen: false);
     await audioManager.pauseLobbyMusic();
 
+    _isNavigatingToRemote = true;
     if (mounted) {
       await Navigator.pushReplacementNamed(context, AppRoutes.remote);
     }
@@ -177,7 +189,7 @@ class _MatchmakingRoomPageState extends State<MatchmakingRoomPage>
     _backgroundController.dispose();
     _pulseController.dispose();
     _roomSubscription?.cancel();
-    if (_mySlot != null && _gameState != 'started') {
+    if (_mySlot != null && !_isNavigatingToRemote) {
       _roomRef.child(_mySlot!).remove();
       _roomRef.child(_mySlot!).onDisconnect().cancel();
     }

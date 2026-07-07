@@ -357,10 +357,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
             ),
-            onPressed: () {
-              Navigator.pop(dialogContext); // Tutup dialog konfirmasi
-              Navigator.pop(context); // Tutup SettingsDialog
-              Provider.of<AuthProvider>(context, listen: false).signOut();
+            onPressed: () async {
+              // Simpan referensi auth provider sebelum context di-pop
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              
+              // Pop the confirmation dialog, settings dialog, and any other routes on top of the root
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              
+              await authProvider.signOut();
             },
             child: const Text('Keluar'),
           ),

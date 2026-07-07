@@ -2,13 +2,20 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 /// Manages authentication state using Firebase Auth.
 /// Listens to auth state changes and notifies listeners accordingly.
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: kIsWeb
+        ? '385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com'
+        : null,
+    serverClientId: '385682929993-se7ntjjuubrur3kkvmtn6uim7u4v0m8h.apps.googleusercontent.com',
+  );
   User? _user;
 
   AuthProvider() {
@@ -111,15 +118,68 @@ class AuthProvider with ChangeNotifier {
 
       return null;
     } on FirebaseAuthException catch (e) {
+      debugPrint('Google Sign-In FirebaseAuthException: ${e.code} - ${e.message}');
       return e.message ?? 'Firebase Auth Error';
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Google Sign-In Error: $e');
+      debugPrint('Stack Trace: $stackTrace');
+      return e.toString();
+    }
+  }
+
+  /// Attempts to sign in with Facebook.
+  /// Automatically registers new Facebook users in Firestore with a random Player ID.
+  /// Returns null on success, or an error message string on failure.
+  Future<String?> signInWithFacebook() async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        // Create a credential from the access token
+        final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
+
+        // Once signed in, return the UserCredential
+        final UserCredential userCredential = await _auth.signInWithCredential(credential);
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          // Check if user already exists in Firestore, if not, create their profile
+          final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+          if (!doc.exists) {
+            final int randomNum = 10000 + Random().nextInt(90000);
+            final String playerId = 'CB-$randomNum';
+
+            await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+              'uid': user.uid,
+              'email': user.email ?? '',
+              'username': user.displayName ?? 'Player',
+              'playerId': playerId,
+              'gems': 0,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          }
+        }
+        return null;
+      } else {
+        return result.message ?? 'Facebook Sign-In aborted.';
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Facebook Sign-In FirebaseAuthException: ${e.code} - ${e.message}');
+      return e.message ?? 'Firebase Auth Error';
+    } catch (e, stackTrace) {
+      debugPrint('Facebook Sign-In Error: $e');
+      debugPrint('Stack Trace: $stackTrace');
       return e.toString();
     }
   }
 
   /// Signs out the currently authenticated user.
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    try {
+      await _googleSignIn.signOut();
+    } catch (e) {
+      debugPrint('Google SignIn signOut error: $e');
+    }
     await _auth.signOut();
   }
 }

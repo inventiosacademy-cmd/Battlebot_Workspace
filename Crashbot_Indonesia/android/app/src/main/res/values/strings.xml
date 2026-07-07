@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Crashbot Indonesia</string>
+    <string name="facebook_app_id">1034383182476520</string>
+    <string name="facebook_client_token">72ab5309116dfb460a6fb780c9e766e1</string>
+    <string name="fb_login_protocol_scheme">fb1034383182476520</string>
+</resources>
